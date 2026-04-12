@@ -1,0 +1,4 @@
+name: flutter_how_to_final
+packages:
+  - apps/**
+  - packages/**

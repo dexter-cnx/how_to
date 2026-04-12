@@ -1,0 +1,23 @@
+name: async_feed_app
+description: Async feed app demo
+publish_to: "none"
+version: 0.0.1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  feature_shared:
+    path: ../../packages/feature_shared
+  ui_kit:
+    path: ../../packages/ui_kit
+  data_layer:
+    path: ../../packages/data_layer
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0

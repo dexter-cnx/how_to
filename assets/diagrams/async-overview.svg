@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="840" viewBox="0 0 1400 840">
+<rect width="1400" height="840" fill="#0f172a"/>
+<text x="70" y="100" fill="#f8fafc" font-size="48" font-family="Arial" font-weight="700">Async Data Overview</text>
+<text x="70" y="155" fill="#cbd5e1" font-size="28" font-family="Arial">Lifecycle, pagination, refresh, retry</text>
+<rect x="90" y="220" width="1220" height="120" rx="26" fill="#2563eb"/>
+<rect x="90" y="390" width="580" height="280" rx="24" fill="#8b5cf6"/>
+<rect x="730" y="390" width="580" height="280" rx="24" fill="#0f766e"/>
+</svg>
