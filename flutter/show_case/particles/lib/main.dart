@@ -27,8 +27,16 @@ class ParticleShowcaseApp extends StatelessWidget {
   }
 }
 
-class ShowcasePage extends StatelessWidget {
+class ShowcasePage extends StatefulWidget {
   const ShowcasePage({super.key});
+
+  @override
+  State<ShowcasePage> createState() => _ShowcasePageState();
+}
+
+class _ShowcasePageState extends State<ShowcasePage> {
+  final ParticleFieldController _particleController = ParticleFieldController();
+  int? _activePointer;
 
   @override
   Widget build(BuildContext context) {
@@ -36,53 +44,80 @@ class ShowcasePage extends StatelessWidget {
     final isMobile = width < 700;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          const Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF030712),
-                    Color(0xFF0B1023),
-                    Color(0xFF111827),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const Positioned.fill(child: ParticleBackground()),
-          const Positioned.fill(child: _SoftGlowLayer()),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 20 : 40,
-                vertical: 24,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Header(isMobile: isMobile),
-                      const SizedBox(height: 28),
-                      _HeroSection(isMobile: isMobile),
-                      const SizedBox(height: 24),
-                      _StatsSection(isMobile: isMobile),
-                      const SizedBox(height: 24),
-                      _FeatureGrid(isMobile: isMobile),
-                      const SizedBox(height: 24),
-                      const _FooterCard(),
+      body: Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (event) {
+          _activePointer = event.pointer;
+          _particleController.triggerTap(event.localPosition);
+          _particleController.startDrag(event.localPosition);
+        },
+        onPointerMove: (event) {
+          if (_activePointer == event.pointer) {
+            _particleController.updateDrag(event.localPosition);
+          }
+        },
+        onPointerUp: (event) {
+          if (_activePointer == event.pointer) {
+            _particleController.endDrag();
+            _activePointer = null;
+          }
+        },
+        onPointerCancel: (event) {
+          if (_activePointer == event.pointer) {
+            _particleController.endDrag();
+            _activePointer = null;
+          }
+        },
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF030712),
+                      Color(0xFF0B1023),
+                      Color(0xFF111827),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+            Positioned.fill(
+              child: ParticleBackground(controller: _particleController),
+            ),
+            const Positioned.fill(child: _SoftGlowLayer()),
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 20 : 40,
+                  vertical: 24,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Header(isMobile: isMobile),
+                        const SizedBox(height: 28),
+                        _HeroSection(isMobile: isMobile),
+                        const SizedBox(height: 24),
+                        _StatsSection(isMobile: isMobile),
+                        const SizedBox(height: 24),
+                        _FeatureGrid(isMobile: isMobile),
+                        const SizedBox(height: 24),
+                        const _FooterCard(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -121,10 +156,10 @@ class _Header extends StatelessWidget {
             ),
           ],
         ),
-        Wrap(
+        const Wrap(
           spacing: 12,
           runSpacing: 12,
-          children: const [
+          children: [
             _ChipLabel(label: 'Flutter'),
             _ChipLabel(label: 'Interactive'),
             _ChipLabel(label: 'Showcase Ready'),
@@ -145,9 +180,9 @@ class _HeroSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isMobile ? 24 : 32),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.06),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Flex(
         direction: isMobile ? Axis.vertical : Axis.horizontal,
@@ -164,11 +199,11 @@ class _HeroSection extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B5CF6).withOpacity(0.16),
+                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: const Text(
-                    'Realtime particle canvas with touch repulsion',
+                    'Realtime particle canvas with tap burst and regroup',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -191,7 +226,7 @@ class _HeroSection extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isMobile ? 15 : 18,
                     height: 1.6,
-                    color: Colors.white.withOpacity(0.78),
+                    color: Colors.white.withValues(alpha: 0.78),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -207,7 +242,7 @@ class _HeroSection extends StatelessWidget {
                     OutlinedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.touch_app_outlined),
-                      label: const Text('Drag on screen'),
+                      label: const Text('Tap or drag'),
                     ),
                   ],
                 ),
@@ -241,8 +276,8 @@ class _StatsSection extends StatelessWidget {
       childAspectRatio: isMobile ? 1.4 : 1.6,
       children: const [
         _StatCard(value: '180', label: 'Particles'),
-        _StatCard(value: '120px', label: 'Link Distance'),
-        _StatCard(value: 'Touch', label: 'Repulsion'),
+        _StatCard(value: '110px', label: 'Link Distance'),
+        _StatCard(value: 'Tap+Drag', label: 'Interaction'),
         _StatCard(value: '60fps*', label: 'Showcase Target'),
       ],
     );
@@ -256,26 +291,30 @@ class _FeatureGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final features = [
-      (
-        Icons.blur_on,
-        'Animated particle motion',
-        'Particles drift, attract to center, and remain visually alive in the background.'
+    final features = const [
+      _FeatureItem(
+        icon: Icons.blur_on,
+        title: 'Pulse motion system',
+        description:
+            'Particles gather into the center, burst back outward, then regroup in a repeating rhythm.',
       ),
-      (
-        Icons.hub_outlined,
-        'Network line effect',
-        'Nearby particles connect with soft lines, adding depth and a premium motion feel.'
+      _FeatureItem(
+        icon: Icons.hub_outlined,
+        title: 'Network line effect',
+        description:
+            'Nearby particles connect with soft lines, adding depth and a premium motion feel.',
       ),
-      (
-        Icons.pan_tool_alt_outlined,
-        'Touch interaction',
-        'Drag on screen to repel particles and give the demo a tactile, playful layer.'
+      _FeatureItem(
+        icon: Icons.pan_tool_alt_outlined,
+        title: 'Touch interaction',
+        description:
+            'Tap to blast nearby particles outward or drag across the screen to keep pushing them around.',
       ),
-      (
-        Icons.web_asset_outlined,
-        'Portfolio-friendly layout',
-        'The scaffold includes hero, stats, features, and footer sections for quick customization.'
+      _FeatureItem(
+        icon: Icons.web_asset_outlined,
+        title: 'Portfolio-friendly layout',
+        description:
+            'The scaffold includes hero, stats, features, and footer sections for quick customization.',
       ),
     ];
 
@@ -292,13 +331,25 @@ class _FeatureGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = features[index];
         return _FeatureCard(
-          icon: item.$1,
-          title: item.$2,
-          description: item.$3,
+          icon: item.icon,
+          title: item.title,
+          description: item.description,
         );
       },
     );
   }
+}
+
+class _FeatureItem {
+  const _FeatureItem({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
 }
 
 class _PreviewCard extends StatelessWidget {
@@ -309,9 +360,9 @@ class _PreviewCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,21 +401,25 @@ class _PreviewCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.28),
+              color: Colors.black.withValues(alpha: 0.28),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Use cases',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: 14),
-                _PreviewLine(label: 'Landing page', value: 'Premium motion background'),
-                _PreviewLine(label: 'Portfolio', value: 'Interactive hero section'),
-                _PreviewLine(label: 'Event screen', value: 'Ambient animated backdrop'),
-                _PreviewLine(label: 'App intro', value: 'Modern visual identity'),
+                _PreviewLine(
+                    label: 'Landing page', value: 'Premium motion background'),
+                _PreviewLine(
+                    label: 'Portfolio', value: 'Interactive hero section'),
+                _PreviewLine(
+                    label: 'Event screen', value: 'Ambient animated backdrop'),
+                _PreviewLine(
+                    label: 'App intro', value: 'Modern visual identity'),
               ],
             ),
           ),
@@ -373,7 +428,7 @@ class _PreviewCard extends StatelessWidget {
             'Tip: replace the text content with your product, agency, toolkit, or app details and this becomes a reusable promo shell.',
             style: TextStyle(
               height: 1.5,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -390,9 +445,9 @@ class _FooterCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Row(
         children: [
@@ -401,7 +456,7 @@ class _FooterCard extends StatelessWidget {
           Expanded(
             child: Text(
               'Next step: swap in your branding, add CTA buttons, and deploy with Flutter Web for a clean visual showcase.',
-              style: TextStyle(color: Colors.white.withOpacity(0.82)),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.82)),
             ),
           ),
         ],
@@ -426,9 +481,9 @@ class _FeatureCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,7 +492,7 @@ class _FeatureCard extends StatelessWidget {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withOpacity(0.18),
+              color: const Color(0xFF8B5CF6).withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Icon(icon, color: const Color(0xFFD8B4FE)),
@@ -459,7 +514,7 @@ class _FeatureCard extends StatelessWidget {
                   description,
                   style: TextStyle(
                     height: 1.55,
-                    color: Colors.white.withOpacity(0.72),
+                    color: Colors.white.withValues(alpha: 0.72),
                   ),
                 ),
               ],
@@ -482,9 +537,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,7 +552,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(color: Colors.white.withOpacity(0.72)),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.72)),
           ),
         ],
       ),
@@ -515,9 +570,9 @@ class _ChipLabel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
     );
@@ -540,7 +595,7 @@ class _PreviewLine extends StatelessWidget {
             width: 96,
             child: Text(
               label,
-              style: TextStyle(color: Colors.white.withOpacity(0.58)),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.58)),
             ),
           ),
           Expanded(
@@ -560,7 +615,7 @@ class _SoftGlowLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
+    return const IgnorePointer(
       child: Stack(
         children: [
           Positioned(
@@ -599,7 +654,7 @@ class _GlowOrb extends StatelessWidget {
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            const Color(0xFF8B5CF6).withOpacity(opacity),
+            const Color(0xFF8B5CF6).withValues(alpha: opacity),
             Colors.transparent,
           ],
         ),
