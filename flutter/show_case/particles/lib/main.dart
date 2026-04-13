@@ -177,6 +177,12 @@ class _HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = [
+      _HeroCopy(isMobile: isMobile),
+      SizedBox(width: isMobile ? 0 : 24, height: isMobile ? 24 : 0),
+      const _PreviewCard(),
+    ];
+
     return Container(
       padding: EdgeInsets.all(isMobile ? 24 : 32),
       decoration: BoxDecoration(
@@ -184,78 +190,87 @@ class _HeroSection extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
-      child: Flex(
-        direction: isMobile ? Axis.vertical : Axis.horizontal,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 3,
-            child: Column(
+      child: isMobile
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: content,
+            )
+          : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: const Text(
-                    'Realtime particle canvas with tap burst and regroup',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFFD8B4FE),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Turn your particle background into a polished Flutter showcase.',
-                  style: TextStyle(
-                    fontSize: isMobile ? 34 : 56,
-                    height: 1.05,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  'This starter demonstrates your uploaded particle effect as the main visual layer, wrapped in a landing-page style UI that works well for demos, portfolio pages, and web showcases.',
-                  style: TextStyle(
-                    fontSize: isMobile ? 15 : 18,
-                    height: 1.6,
-                    color: Colors.white.withValues(alpha: 0.78),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    FilledButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.play_arrow_rounded),
-                      label: const Text('Live Demo Feel'),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.touch_app_outlined),
-                      label: const Text('Tap or drag'),
-                    ),
-                  ],
-                ),
+                Expanded(flex: 3, child: content[0]),
+                content[1],
+                const Expanded(flex: 2, child: _PreviewCard()),
               ],
             ),
+    );
+  }
+}
+
+class _HeroCopy extends StatelessWidget {
+  const _HeroCopy({required this.isMobile});
+
+  final bool isMobile;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
           ),
-          SizedBox(width: isMobile ? 0 : 24, height: isMobile ? 24 : 0),
-          const Expanded(
-            flex: 2,
-            child: _PreviewCard(),
+          decoration: BoxDecoration(
+            color: const Color(0xFF8B5CF6).withValues(alpha: 0.16),
+            borderRadius: BorderRadius.circular(999),
           ),
-        ],
-      ),
+          child: const Text(
+            'Realtime particle canvas with tap burst and regroup',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFFD8B4FE),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Turn your particle background into a polished Flutter showcase.',
+          style: TextStyle(
+            fontSize: isMobile ? 34 : 56,
+            height: 1.05,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 18),
+        Text(
+          'This starter demonstrates your uploaded particle effect as the main visual layer, wrapped in a landing-page style UI that works well for demos, portfolio pages, and web showcases.',
+          style: TextStyle(
+            fontSize: isMobile ? 15 : 18,
+            height: 1.6,
+            color: Colors.white.withValues(alpha: 0.78),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            FilledButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.play_arrow_rounded),
+              label: const Text('Live Demo Feel'),
+            ),
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.touch_app_outlined),
+              label: const Text('Tap or drag'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -273,7 +288,7 @@ class _StatsSection extends StatelessWidget {
       crossAxisCount: isMobile ? 2 : 4,
       crossAxisSpacing: 16,
       mainAxisSpacing: 16,
-      childAspectRatio: isMobile ? 1.4 : 1.6,
+      childAspectRatio: isMobile ? 0.95 : 1.6,
       children: const [
         _StatCard(value: '180', label: 'Particles'),
         _StatCard(value: '110px', label: 'Link Distance'),
