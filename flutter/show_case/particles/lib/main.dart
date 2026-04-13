@@ -141,23 +141,48 @@ class _Header extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: isMobile ? 40 : 42,
+              height: isMobile ? 40 : 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
                 gradient: const LinearGradient(
                   colors: [Color(0xFF8B5CF6), Color(0xFF06B6D4)],
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF06B6D4).withValues(alpha: 0.22),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              child: const Icon(Icons.auto_awesome, color: Colors.white),
+              child: Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+                size: isMobile ? 20 : 24,
+              ),
             ),
             const SizedBox(width: 12),
-            Text(
-              'Particle Showcase',
-              style: TextStyle(
-                fontSize: isMobile ? 18 : 20,
-                fontWeight: FontWeight.w700,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Particle Showcase',
+                  style: TextStyle(
+                    fontSize: isMobile ? 18 : 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (isMobile)
+                  Text(
+                    'Ambient motion demo',
+                    style: TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 0.3,
+                      color: Colors.white.withValues(alpha: 0.56),
+                    ),
+                  ),
+              ],
             ),
           ],
         ),
@@ -182,32 +207,66 @@ class _HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = [
-      _HeroCopy(isMobile: isMobile),
-      SizedBox(width: isMobile ? 0 : 24, height: isMobile ? 24 : 0),
-      const _PreviewCard(),
-    ];
-
     return Container(
       padding: EdgeInsets.all(isMobile ? 18 : 32),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: isMobile ? 0.08 : 0.06),
+            const Color(0xFF0F172A).withValues(alpha: 0.72),
+          ],
+        ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF020617).withValues(alpha: 0.28),
+            blurRadius: 34,
+            offset: const Offset(0, 18),
+          ),
+        ],
       ),
-      child: isMobile
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: content,
-            )
-          : Row(
+      child: Stack(
+        children: [
+          Positioned(
+            right: isMobile ? -12 : -18,
+            top: isMobile ? -18 : -24,
+            child: Container(
+              width: isMobile ? 92 : 140,
+              height: isMobile ? 92 : 140,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    const Color(0xFF67E8F9).withValues(alpha: 0.16),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (isMobile)
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 3, child: content[0]),
-                content[1],
-                const Expanded(flex: 2, child: _PreviewCard()),
+                _HeroCopy(isMobile: true),
+                SizedBox(height: 24),
+                _PreviewCard(isCompact: true),
+              ],
+            )
+          else
+            const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 3, child: _HeroCopy(isMobile: false)),
+                SizedBox(width: 24),
+                Expanded(flex: 2, child: _PreviewCard()),
               ],
             ),
+        ],
+      ),
     );
   }
 }
@@ -222,6 +281,18 @@ class _HeroCopy extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (isMobile)
+          Container(
+            width: 56,
+            height: 4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF67E8F9), Color(0xFF8B5CF6)],
+              ),
+            ),
+          ),
+        if (isMobile) const SizedBox(height: 14),
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: isMobile ? 10 : 12,
@@ -247,6 +318,7 @@ class _HeroCopy extends StatelessWidget {
             fontSize: isMobile ? 30 : 56,
             height: isMobile ? 1.08 : 1.05,
             fontWeight: FontWeight.w800,
+            letterSpacing: isMobile ? -0.6 : -1.2,
           ),
         ),
         SizedBox(height: isMobile ? 14 : 18),
@@ -267,11 +339,35 @@ class _HeroCopy extends StatelessWidget {
               onPressed: () {},
               icon: const Icon(Icons.play_arrow_rounded),
               label: const Text('Live Demo Feel'),
+              style: FilledButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 18,
+                  vertical: isMobile ? 14 : 16,
+                ),
+                backgroundColor: const Color(0xFF67E8F9),
+                foregroundColor: const Color(0xFF07111F),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
             ),
             OutlinedButton.icon(
               onPressed: () {},
               icon: const Icon(Icons.touch_app_outlined),
               label: const Text('Tap or drag'),
+              style: OutlinedButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 14 : 18,
+                  vertical: isMobile ? 14 : 16,
+                ),
+                side: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.18),
+                ),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
             ),
           ],
         ),
@@ -382,16 +478,32 @@ class _FeatureItem {
 }
 
 class _PreviewCard extends StatelessWidget {
-  const _PreviewCard();
+  const _PreviewCard({this.isCompact = false});
+
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(isCompact ? 16 : 18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.08),
+            Colors.white.withValues(alpha: 0.03),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF020617).withValues(alpha: 0.2),
+            blurRadius: 24,
+            offset: const Offset(0, 14),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,9 +538,9 @@ class _PreviewCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: isCompact ? 14 : 16),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: EdgeInsets.all(isCompact ? 12 : 14),
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.28),
               borderRadius: BorderRadius.circular(20),
@@ -452,11 +564,11 @@ class _PreviewCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: isCompact ? 12 : 14),
           Text(
             'Tip: replace the text content with your product, agency, toolkit, or app details and this becomes a reusable promo shell.',
             style: TextStyle(
-              fontSize: 13,
+              fontSize: isCompact ? 12 : 13,
               height: 1.5,
               color: Colors.white.withValues(alpha: 0.7),
             ),
@@ -477,7 +589,12 @@ class _FooterCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isMobile ? 18 : 24),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        gradient: LinearGradient(
+          colors: [
+            Colors.white.withValues(alpha: 0.07),
+            Colors.white.withValues(alpha: 0.03),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
@@ -517,9 +634,16 @@ class _FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(isMobile ? 16 : 20),
+      padding: EdgeInsets.all(isMobile ? 14 : 20),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.08),
+            Colors.white.withValues(alpha: 0.04),
+          ],
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
@@ -585,26 +709,37 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF111827).withValues(alpha: 0.88),
+            const Color(0xFF0F172A).withValues(alpha: 0.7),
+          ],
+        ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(
+          color:
+              const Color(0xFF67E8F9).withValues(alpha: isMobile ? 0.12 : 0.08),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             value,
             style: TextStyle(
-              fontSize: isMobile ? 22 : 28,
+              fontSize: isMobile ? 20 : 28,
               fontWeight: FontWeight.w800,
             ),
           ),
-          SizedBox(height: isMobile ? 6 : 8),
+          SizedBox(height: isMobile ? 4 : 8),
           Text(
             label,
             style: TextStyle(
-              fontSize: isMobile ? 12 : 14,
+              fontSize: isMobile ? 11 : 14,
               color: Colors.white.withValues(alpha: 0.72),
             ),
           ),
