@@ -42,6 +42,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 700;
+    final sectionGap = isMobile ? 20.0 : 24.0;
 
     return Scaffold(
       body: Listener(
@@ -92,8 +93,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
             SafeArea(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 20 : 40,
-                  vertical: 24,
+                  horizontal: isMobile ? 16 : 40,
+                  vertical: isMobile ? 18 : 24,
                 ),
                 child: Center(
                   child: ConstrainedBox(
@@ -102,14 +103,14 @@ class _ShowcasePageState extends State<ShowcasePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _Header(isMobile: isMobile),
-                        const SizedBox(height: 28),
+                        SizedBox(height: isMobile ? 20 : 28),
                         _HeroSection(isMobile: isMobile),
-                        const SizedBox(height: 24),
+                        SizedBox(height: sectionGap),
                         _StatsSection(isMobile: isMobile),
-                        const SizedBox(height: 24),
+                        SizedBox(height: sectionGap),
                         _FeatureGrid(isMobile: isMobile),
-                        const SizedBox(height: 24),
-                        const _FooterCard(),
+                        SizedBox(height: sectionGap),
+                        _FooterCard(isMobile: isMobile),
                       ],
                     ),
                   ),
@@ -132,6 +133,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
+      spacing: isMobile ? 10 : 0,
       runSpacing: 12,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
@@ -150,19 +152,22 @@ class _Header extends StatelessWidget {
               child: const Icon(Icons.auto_awesome, color: Colors.white),
             ),
             const SizedBox(width: 12),
-            const Text(
+            Text(
               'Particle Showcase',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                fontSize: isMobile ? 18 : 20,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
-        const Wrap(
-          spacing: 12,
-          runSpacing: 12,
+        Wrap(
+          spacing: isMobile ? 8 : 12,
+          runSpacing: 8,
           children: [
-            _ChipLabel(label: 'Flutter'),
-            _ChipLabel(label: 'Interactive'),
-            _ChipLabel(label: 'Showcase Ready'),
+            _ChipLabel(label: 'Flutter', isMobile: isMobile),
+            _ChipLabel(label: 'Interactive', isMobile: isMobile),
+            _ChipLabel(label: 'Showcase Ready', isMobile: isMobile),
           ],
         ),
       ],
@@ -184,7 +189,7 @@ class _HeroSection extends StatelessWidget {
     ];
 
     return Container(
-      padding: EdgeInsets.all(isMobile ? 24 : 32),
+      padding: EdgeInsets.all(isMobile ? 18 : 32),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(28),
@@ -218,45 +223,45 @@ class _HeroCopy extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 8,
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 10 : 12,
+            vertical: isMobile ? 7 : 8,
           ),
           decoration: BoxDecoration(
             color: const Color(0xFF8B5CF6).withValues(alpha: 0.16),
             borderRadius: BorderRadius.circular(999),
           ),
-          child: const Text(
+          child: Text(
             'Realtime particle canvas with tap burst and regroup',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: isMobile ? 11 : 12,
               fontWeight: FontWeight.w600,
-              color: Color(0xFFD8B4FE),
+              color: const Color(0xFFD8B4FE),
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: isMobile ? 16 : 20),
         Text(
           'Turn your particle background into a polished Flutter showcase.',
           style: TextStyle(
-            fontSize: isMobile ? 34 : 56,
-            height: 1.05,
+            fontSize: isMobile ? 30 : 56,
+            height: isMobile ? 1.08 : 1.05,
             fontWeight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: isMobile ? 14 : 18),
         Text(
           'This starter demonstrates your uploaded particle effect as the main visual layer, wrapped in a landing-page style UI that works well for demos, portfolio pages, and web showcases.',
           style: TextStyle(
-            fontSize: isMobile ? 15 : 18,
-            height: 1.6,
+            fontSize: isMobile ? 14 : 18,
+            height: isMobile ? 1.5 : 1.6,
             color: Colors.white.withValues(alpha: 0.78),
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: isMobile ? 18 : 24),
         Wrap(
-          spacing: 12,
-          runSpacing: 12,
+          spacing: 10,
+          runSpacing: 10,
           children: [
             FilledButton.icon(
               onPressed: () {},
@@ -286,14 +291,22 @@ class _StatsSection extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: isMobile ? 2 : 4,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: isMobile ? 0.95 : 1.6,
-      children: const [
-        _StatCard(value: '180', label: 'Particles'),
-        _StatCard(value: '110px', label: 'Link Distance'),
-        _StatCard(value: 'Tap+Drag', label: 'Interaction'),
-        _StatCard(value: '60fps*', label: 'Showcase Target'),
+      crossAxisSpacing: isMobile ? 12 : 16,
+      mainAxisSpacing: isMobile ? 12 : 16,
+      childAspectRatio: isMobile ? 1.05 : 1.6,
+      children: [
+        _StatCard(isMobile: isMobile, value: '180', label: 'Particles'),
+        _StatCard(
+          isMobile: isMobile,
+          value: '110px',
+          label: 'Link Distance',
+        ),
+        _StatCard(isMobile: isMobile, value: 'Tap+Drag', label: 'Interaction'),
+        _StatCard(
+          isMobile: isMobile,
+          value: '60fps*',
+          label: 'Showcase Target',
+        ),
       ],
     );
   }
@@ -338,14 +351,15 @@ class _FeatureGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: isMobile ? 1 : 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: isMobile ? 2.2 : 2.1,
+        crossAxisSpacing: isMobile ? 12 : 16,
+        mainAxisSpacing: isMobile ? 12 : 16,
+        childAspectRatio: isMobile ? 1.75 : 2.1,
       ),
       itemCount: features.length,
       itemBuilder: (context, index) {
         final item = features[index];
         return _FeatureCard(
+          isMobile: isMobile,
           icon: item.icon,
           title: item.title,
           description: item.description,
@@ -373,7 +387,7 @@ class _PreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
@@ -412,9 +426,9 @@ class _PreviewCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.28),
               borderRadius: BorderRadius.circular(20),
@@ -438,10 +452,11 @@ class _PreviewCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             'Tip: replace the text content with your product, agency, toolkit, or app details and this becomes a reusable promo shell.',
             style: TextStyle(
+              fontSize: 13,
               height: 1.5,
               color: Colors.white.withValues(alpha: 0.7),
             ),
@@ -453,25 +468,31 @@ class _PreviewCard extends StatelessWidget {
 }
 
 class _FooterCard extends StatelessWidget {
-  const _FooterCard();
+  const _FooterCard({required this.isMobile});
+
+  final bool isMobile;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isMobile ? 18 : 24),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(Icons.rocket_launch_outlined),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               'Next step: swap in your branding, add CTA buttons, and deploy with Flutter Web for a clean visual showcase.',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.82)),
+              style: TextStyle(
+                fontSize: isMobile ? 13 : 14,
+                color: Colors.white.withValues(alpha: 0.82),
+              ),
             ),
           ),
         ],
@@ -482,11 +503,13 @@ class _FooterCard extends StatelessWidget {
 
 class _FeatureCard extends StatelessWidget {
   const _FeatureCard({
+    required this.isMobile,
     required this.icon,
     required this.title,
     required this.description,
   });
 
+  final bool isMobile;
   final IconData icon;
   final String title;
   final String description;
@@ -494,7 +517,7 @@ class _FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
@@ -504,31 +527,36 @@ class _FeatureCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 52,
-            height: 52,
+            width: isMobile ? 44 : 52,
+            height: isMobile ? 44 : 52,
             decoration: BoxDecoration(
               color: const Color(0xFF8B5CF6).withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: Icon(icon, color: const Color(0xFFD8B4FE)),
+            child: Icon(
+              icon,
+              size: isMobile ? 20 : 24,
+              color: const Color(0xFFD8B4FE),
+            ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: isMobile ? 12 : 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: isMobile ? 16 : 18,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: isMobile ? 8 : 10),
                 Text(
                   description,
                   style: TextStyle(
-                    height: 1.55,
+                    fontSize: isMobile ? 13 : 14,
+                    height: 1.5,
                     color: Colors.white.withValues(alpha: 0.72),
                   ),
                 ),
@@ -542,15 +570,20 @@ class _FeatureCard extends StatelessWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({required this.value, required this.label});
+  const _StatCard({
+    required this.isMobile,
+    required this.value,
+    required this.label,
+  });
 
+  final bool isMobile;
   final String value;
   final String label;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(isMobile ? 16 : 20),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(22),
@@ -562,12 +595,18 @@ class _StatCard extends StatelessWidget {
         children: [
           Text(
             value,
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              fontSize: isMobile ? 22 : 28,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: isMobile ? 6 : 8),
           Text(
             label,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.72)),
+            style: TextStyle(
+              fontSize: isMobile ? 12 : 14,
+              color: Colors.white.withValues(alpha: 0.72),
+            ),
           ),
         ],
       ),
@@ -576,20 +615,30 @@ class _StatCard extends StatelessWidget {
 }
 
 class _ChipLabel extends StatelessWidget {
-  const _ChipLabel({required this.label});
+  const _ChipLabel({required this.label, required this.isMobile});
 
   final String label;
+  final bool isMobile;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 14,
+        vertical: isMobile ? 8 : 10,
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
-      child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: isMobile ? 12 : 14,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
