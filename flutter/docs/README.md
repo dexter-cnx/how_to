@@ -1,12 +1,16 @@
 # Docs Index
 
 ## หมวดหลัก
+
 - [Learning Path](learning_path.md)
 - [Repo Conventions](repo_conventions.md)
 - [Architecture](architecture/README.md)
-- [Slivers](slivers/README.md)
 - [State Management](state-management/README.md)
 - [Async Data](async-data/README.md)
+- [Slivers](slivers/README.md)
+- [Performance](performance/README.md)
+- [Testing](testing/README.md)
+- [App Log / Logging](app_log/README.md)
 
 ## วิธีใช้ docs ชุดนี้
 1. เลือกปัญหาหลักที่กำลังแก้
